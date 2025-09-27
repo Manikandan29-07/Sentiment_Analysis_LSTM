@@ -1,0 +1,15 @@
+# Ignore datset
+*.csv
+
+# Ignore venv
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+saved_assets/
+
+# Ignore the trained models
+*.h5
+*.pkl
