@@ -8,7 +8,7 @@ from data_preprocessor import preprocess_text
 # --- Constants (Must match those in train.py) ---
 MAX_LEN = 200
 SAVE_PATH = 'saved_assets'
-MODEL_FILE = os.path.join(SAVE_PATH, 'sentimental_model_lstm.h5')
+MODEL_FILE = os.path.join(SAVE_PATH, 'sentimental_model_bilstm.h5')
 TOKENIZER_FILE = os.path.join(SAVE_PATH, 'tokenizer.pkl')
 LABEL_ENCODER_FILE = os.path.join(SAVE_PATH, 'label_encoder.pkl')
 

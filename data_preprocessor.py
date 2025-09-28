@@ -7,8 +7,7 @@ import string
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.utils import to_categorical
-import numpy as np # Added numpy
+# Removed: from tensorflow.keras.utils import to_categorical
 
 try:
     nltk.data.find('corpora/stopwords')
@@ -46,36 +45,30 @@ def tokenize_and_pad(texts, max_words, max_len):
     padded_sequences = pad_sequences(
         sequences,
         maxlen = max_len,
-        padding = 'post',
-        truncating = 'post'
+        padding = 'post',           # shorter sequences are filled with zeros
+        truncating = 'post'         # Larger sequences are cut off 
     )
     return padded_sequences, tokenizer
 
 
 def prepare_data(df:pd.DataFrame, text_column:str, label_column:str, max_words:int, max_len:int):
     """
-    Applies ALL preprocessing steps: Cleaning, Tokenization, Padding, and One-Hot Encoding.
+    Applies ALL preprocessing steps: Cleaning, Tokenization, Padding, and BINARY Label Encoding.
     """
-    print("Data Preprocessing Started (Multi-Class)")
+    print("Data Preprocessing Started (Binary Classification)")
     
     # 1. Custom Text Cleaning
     df['cleaned_text'] = df[text_column].apply(preprocess_text)
     
     # 2. Label Encoding (Numerical mapping)
     le = LabelEncoder()
-    # First, convert text labels to numerical indices (e.g., Negative:0, Positive:1)
-    numerical_labels = le.fit_transform(df[label_column]) 
+    # Convert labels to 0 and 1, and cast to float32 (CRUCIAL for binary_crossentropy)
+    y = le.fit_transform(df[label_column]).astype('float32') 
 
-    # 3. One-Hot Encoding (OHE) - This ensures the output is 2D
-    y = to_categorical(numerical_labels, num_classes=len(le.classes_))
-    
-    # DEBUG: Crucial check to confirm y is 2D before returning
-    print(f"DEBUG: OHE labels 'y' shape after to_categorical: {y.shape}")
-
-    # 4. Tokenization and Padding
+    # 3. Tokenization and Padding
     X, tokenizer = tokenize_and_pad(df['cleaned_text'].values, max_words, max_len)
     
     print("Data Preprocessing Completed")
     
-    # Return OHE labels (y) which is a 2D array
+    # Return 1D float labels (y)
     return X, y, tokenizer, le

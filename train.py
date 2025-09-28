@@ -13,7 +13,6 @@ EMBEDDING_DIM = 128
 EPOCHS = 10
 BATCH_SIZE = 64
 SAVE_PATH = 'saved_assets'
-# Note: NUM_CLASSES is now dynamically determined based on the dataset.
 
 def main():
     if not os.path.exists(FILE_PATH):
@@ -41,9 +40,9 @@ def main():
     
     # --- 3. Build Model ---
     # Use the second dimension of the OHE array for the correct number of classes
-    num_classes_runtime = y_train.shape[1] 
+    # num_classes_runtime = y_train.shape[1] 
     
-    print(f"\nBuilding and compiling multi-class LSTM model with {num_classes_runtime} classes")
+    # print(f"\nBuilding and compiling multi-class LSTM model with {num_classes_runtime} classes")
     
     model = built_lstm_model(
         vocab_size=MAX_WORDS,
@@ -71,7 +70,7 @@ def main():
     
     os.makedirs(SAVE_PATH, exist_ok=True)
     
-    model_saved_path = os.path.join(SAVE_PATH,'sentimental_model_lstm.h5')
+    model_saved_path = os.path.join(SAVE_PATH,'sentimental_model_bilstm.h5')
     model.save(model_saved_path)
     print(f"Model saved to {model_saved_path}")
     

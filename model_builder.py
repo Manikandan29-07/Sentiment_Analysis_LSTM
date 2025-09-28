@@ -1,9 +1,10 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
+from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout, Bidirectional
 
 def built_lstm_model(vocab_size: int, max_len: int, embedding_dim: int = 128):
     """
-    Defines and compiles the LSTM-based sentiment classification model for multi-class.
+    Defines and compiles the LSTM-based sentiment classification model for BINARY classification.
+    The core LSTM layer is now wrapped in a Bidirectional layer to capture context from both directions.
 
     Args:
         vocab_size (int): The maximum number of words in the vocabulary.
@@ -24,14 +25,16 @@ def built_lstm_model(vocab_size: int, max_len: int, embedding_dim: int = 128):
         input_length=max_len
     ))
     
-    # 2. LSTM Layer: The core recurrent layer for sequence processing
-    model.add(LSTM(64))
+    # 2. Bidirectional LSTM Layer (MAJOR CHANGE)
+    # The Bidirectional wrapper duplicates the LSTM layer and runs the sequence through it twice (forward and backward). The outputs are then concatenated.
+    model.add(Bidirectional(LSTM(64)))  # output units remain 64 x 2 = 128 (hidden units)
     
     # 3. Optional Dropout: Reduces overfitting
     model.add(Dropout(0.5))
     
     # 4. Output Layer: Uses 'sigmoid' for binary-class probability distribution
-    model.add(Dense(2, activation='sigmoid'))
+    # model.add(Dense(2, activation='sigmoid')) - # in the case of lstm 
+    model.add(Dense(1, activation='sigmoid'))
     
     # 5. Compile the model with 'categorical_crossentropy' for OHE labels
     model.compile(
